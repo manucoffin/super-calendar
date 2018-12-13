@@ -5,28 +5,31 @@
 </template>
 
 <script lang="ts">
-  import { Vue } from 'vue-property-decorator';
   import store from './store';
   import ArticlesList from '@/modules/articles/components/ArticlesList.vue';
   import { State, Action, Getter, namespace } from 'vuex-class';
-  import Component from 'vue-class-component';
-  import { ArticleState } from '@/models/ArticleState';
+  import Component, { mixins } from 'vue-class-component';
   import { Article } from '@/models/Article';
+  import ModuleInit from '@/mixins/module-init';
 
-  const storeModule = namespace('$_articles');
+  const moduleNamespace = '$_articles';
+  const storeModule = namespace(moduleNamespace);
 
   @Component({
     components: {
       ArticlesList,
     }
   })
-  export default class ArticlesContainer extends Vue {
+  export default class ArticlesContainer extends mixins(ModuleInit) {
     @storeModule.Getter articles!: Article[];
     @storeModule.Action fetchArticles!: any;
 
     created() {
-      // TODO: Check that module is not already registered
-      this.$store.registerModule('$_articles', store);
+      this.moduleNamespace = moduleNamespace;
+
+      if (!this.isModuleRegistered()) {
+        this.$store.registerModule('$_articles', store);
+      }
 
       this.fetchArticles();
     }

@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from './views/Home.vue';
+import ArticlesContainer from '@/modules/articles/index.vue';
+import ArticleDetail from '@/modules/articles/components/ArticleDetail.vue';
 
 Vue.use(Router);
 
@@ -8,8 +9,17 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home,
+      name: 'articles',
+      component: ArticlesContainer,
+    },
+    {
+      path: '/articles',
+      redirect: { name: 'articles' },
+    },
+    {
+      path: '/articles/:id',
+      name: 'articleDetail',
+      component: ArticleDetail,
     },
     {
       path: '/about',

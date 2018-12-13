@@ -1,7 +1,9 @@
 <template>
     <div>
         <ul>
-            <li v-for="article of articles">
+            <li v-for="article of articles"
+                :key="article.id"
+                @click="goToDetail(article.id)">
                 {{ article.title }}
             </li>
         </ul>
@@ -10,13 +12,16 @@
 
 <script lang="ts">
   import { Component, Prop, Vue } from 'vue-property-decorator';
-  import axios from 'axios';
   import { Article } from '@/models/Article';
 
   @Component({
     name: 'ArticlesList',
   })
   export default class ArticlesList extends Vue {
-    @Prop() articles: Article[];
+    @Prop() articles!: Article[];
+
+    goToDetail(articleId) {
+      this.$router.push({ name: 'articleDetail', params: { id: articleId } })
+    }
   }
 </script>
