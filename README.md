@@ -41,7 +41,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
   articles:[
     '{{repeat(30)}}',
     {
-      _id: '{{objectId()}}',
+      id: '{{objectId()}}',
       title: '{{firstName()}}',
       content: '{{lorem(1, "paragraphs")}}',
       author: {
@@ -49,17 +49,18 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
         firstname: '{{firstName()}}',
         lastname: '{{surname()}}'
       },
-      created_at: '{{moment(this.date(new Date(2014, 0, 1), new Date())).format("LLLL")}}',
+      created_at: '{{ date(new Date(2014, 0, 1), new Date(), "YYYY-MM-dd HH:mm:ss") }}',
       comments: [
         '{{repeat(random(0,6))}}',
         {
+          id: '{{objectId()}}',
           content: '{{lorem(random(1,3), "paragraphs")}}',
           author: {
             id: '{{objectId()}}',
             firstname: '{{firstName()}}',
             lastname: '{{surname()}}'
           },
-          created_at: '{{moment(this.date(new Date(2014, 0, 1), new Date())).format("LLLL")}}'
+          created_at: '{{ this.date(new Date(2014, 0, 1), new Date(), "YYYY.MM.dd HH:mm:ss") }}'
         }
       ]
     }

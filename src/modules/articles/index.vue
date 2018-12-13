@@ -31,7 +31,9 @@
         this.$store.registerModule('$_articles', store);
       }
 
-      this.fetchArticles();
+      if (this.articles.length === 0) {
+        this.fetchArticles();
+      }
     }
   }
 </script>
