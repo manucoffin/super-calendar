@@ -4,7 +4,7 @@ import Component from 'vue-class-component';
 // You can declare a mixin as the same style as components.
 @Component
 export default class ModuleInit extends Vue {
-  private moduleNamespace!: string;
+  public moduleNamespace!: string;
 
   isModuleRegistered() {
     let isRegistered = false;

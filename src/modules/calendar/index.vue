@@ -1,38 +1,38 @@
 <template>
     <div>
-        <ArticlesList :articles="articles"></ArticlesList>
+        <Calendar></Calendar>
     </div>
 </template>
 
 <script lang="ts">
   import store from './store';
-  import ArticlesList from '@/modules/articles/components/ArticlesList.vue';
+  import Calendar from '@/modules/calendar/components/Calendar.vue';
   import { State, Action, Getter, namespace } from 'vuex-class';
   import Component, { mixins } from 'vue-class-component';
-  import { Article } from '@/models/Article';
   import ModuleInit from '@/mixins/module-init';
+  import { CalendarEvent } from '@/models/CalendarEvent';
 
-  const moduleNamespace = '$_articles';
+  const moduleNamespace = '$_calendar';
   const storeModule = namespace(moduleNamespace);
 
   @Component({
     components: {
-      ArticlesList,
+      Calendar,
     }
   })
-  export default class ArticlesContainer extends mixins(ModuleInit) {
-    @storeModule.Getter articles!: Article[];
-    @storeModule.Action fetchArticles!: any;
+  export default class CalendarContainer extends mixins(ModuleInit) {
+    @storeModule.Getter events!: CalendarEvent[];
+    @storeModule.Action fetchEvents!: any;
 
     created() {
       this.moduleNamespace = moduleNamespace;
 
       if (!this.isModuleRegistered()) {
-        this.$store.registerModule('$_articles', store);
+        this.$store.registerModule('$_calendar', store);
       }
 
-      if (this.articles.length === 0) {
-        this.fetchArticles();
+      this.fetchEvents();
+      if (this.events.length === 0) {
       }
     }
   }

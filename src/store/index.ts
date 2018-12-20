@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { RootState } from '@/store/type';
-import articles from '@/modules/articles/store';
+import articles from '@/modules/calendar/store';
 
 Vue.use(Vuex);
 

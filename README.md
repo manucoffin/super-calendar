@@ -38,29 +38,23 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 [json-generator](https://www.json-generator.com/)
 ```javascript
 {
-  articles:[
+  events:[
     '{{repeat(30)}}',
     {
-      id: '{{objectId()}}',
-      title: '{{firstName()}}',
-      content: '{{lorem(1, "paragraphs")}}',
-      author: {
-        id: '{{objectId()}}',
-        firstname: '{{firstName()}}',
-        lastname: '{{surname()}}'
-      },
-      created_at: '{{ date(new Date(2014, 0, 1), new Date(), "YYYY-MM-dd HH:mm:ss") }}',
-      comments: [
-        '{{repeat(random(0,6))}}',
+      id: '{{index(1)}}',
+      date_start: '{{ date(new Date(2018, 0, 1), new Date(), "YYYY-MM-dd HH:mm:ss") }}',
+      duration: '{{integer(1, 4320)}}',
+      label: '{{firstName()}}',
+      description: '{{lorem(1, "paragraphs")}}',
+      place: '{{city()}}',
+      categories: [
+		'{{repeat(integer(1, 3))}}',
         {
-          id: '{{objectId()}}',
-          content: '{{lorem(random(1,3), "paragraphs")}}',
-          author: {
-            id: '{{objectId()}}',
-            firstname: '{{firstName()}}',
-            lastname: '{{surname()}}'
-          },
-          created_at: '{{ this.date(new Date(2014, 0, 1), new Date(), "YYYY.MM.dd HH:mm:ss") }}'
+          id: '{{index(1)}}',
+          label: function (tags) {
+                var categories = ['Sport', 'Musique', 'Randonnée', 'Cinéma', 'Restaurant'];
+                return categories[tags.integer(0, categories.length - 1)];
+              }
         }
       ]
     }
