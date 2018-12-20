@@ -15,12 +15,17 @@
                 </span>
             </div>
         </div>
+
+        <CellDetailPopup v-if="showPopup"></CellDetailPopup>
     </div>
 </template>
 
 <script lang="ts">
-  import { Component, Prop, Vue } from 'vue-property-decorator';
+  // import { Component, Prop, Vue } from 'vue-property-decorator';
+  import Vue from 'vue'
+  import Component from 'vue-class-component'
   import { CalendarEvent } from '@/models/CalendarEvent';
+  import CellDetailPopup from '@/modules/calendar/components/CellDetailPopup.vue';
   import { State, Action, Getter, namespace } from 'vuex-class';
 
   const moduleNamespace = '$_calendar';
@@ -28,6 +33,9 @@
 
   @Component({
     name: 'Calendar',
+    components: {
+      CellDetailPopup,
+    }
   })
   export default class ArticlesList extends Vue {
     @storeModule.Getter events!: CalendarEvent[];
@@ -35,21 +43,22 @@
     currentDay!: number;
     currentMonth!: number;
     currentYear!: number;
-    cells!: object[];
+    showPopup = false;
+
+    get cells() {
+      const daysInMonth = this.daysInMonth(this.currentMonth, this.currentYear);
+      return this.buildDaysArray(daysInMonth);
+    }
 
     created() {
       const now = new Date();
       this.currentDay = now.getDate();
       this.currentMonth = now.getMonth();
       this.currentYear = now.getUTCFullYear();
-
-      const daysInMonth = this.daysInMonth(this.currentMonth, this.currentYear);
-
-      this.cells = this.buildDaysArray(daysInMonth);
     }
 
     private showDetail() {
-
+      this.showPopup = true;
     }
 
     private buildDaysArray(daysInMonth: number): object[] {
@@ -97,5 +106,11 @@
                 border-radius: 3px;
             }
         }
+    }
+
+    CellDetailPopup {
+        position: absolute;
+        top: 0;
+        left: 0;
     }
 </style>
