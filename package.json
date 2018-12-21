@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "sass-resources-loader": "^2.0.0",
     "tslint-config-airbnb": "^5.11.1",
     "vue": "^2.5.17",
     "vue-class-component": "^6.0.0",

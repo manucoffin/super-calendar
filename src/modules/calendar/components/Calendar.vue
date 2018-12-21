@@ -1,6 +1,5 @@
 <template>
     <div>
-        <!--<h1>{{ currentDay }}/{{ currentMonth }}/{{ currentYear }}</h1>-->
         <div class="calendar">
             <div v-for="cell of cells"
                  :key="cell.id"
@@ -16,17 +15,18 @@
             </div>
         </div>
 
-        <CellDetailPopup v-if="showPopup"></CellDetailPopup>
+        <CellDetailPopup v-if="showPopup"
+                         :clickedCell="clickedCell">
+        </CellDetailPopup>
     </div>
 </template>
 
 <script lang="ts">
-  // import { Component, Prop, Vue } from 'vue-property-decorator';
-  import Vue from 'vue'
-  import Component from 'vue-class-component'
+  import { Component, Prop, Vue } from 'vue-property-decorator';
   import { CalendarEvent } from '@/models/CalendarEvent';
   import CellDetailPopup from '@/modules/calendar/components/CellDetailPopup.vue';
   import { State, Action, Getter, namespace } from 'vuex-class';
+  import { Cell } from '@/models/Cell';
 
   const moduleNamespace = '$_calendar';
   const storeModule = namespace(moduleNamespace);
@@ -44,6 +44,7 @@
     currentMonth!: number;
     currentYear!: number;
     showPopup = false;
+    clickedCell: Cell = {x: 0, y: 0, w: 0, h: 0};
 
     get cells() {
       const daysInMonth = this.daysInMonth(this.currentMonth, this.currentYear);
@@ -57,7 +58,16 @@
       this.currentYear = now.getUTCFullYear();
     }
 
-    private showDetail() {
+    private showDetail(e: any) {
+      const el = e.target.getBoundingClientRect();
+
+      this.clickedCell = {
+        x: el.left,
+        y: el.top,
+        w: el.width,
+        h: el.height,
+      };
+
       this.showPopup = true;
     }
 
@@ -91,13 +101,42 @@
         display: grid;
         grid-template-columns: auto auto auto auto auto auto auto;
         grid-template-rows: auto;
-        grid-column-gap: 1px;
-        grid-row-gap: 1px;
+        grid-column-gap: 2px;
+        grid-row-gap: 2px;
+        padding: 3px;
+        box-sizing: border-box;
+        cursor: pointer;
 
         .cell {
             background: rgb(171,213,66);
             padding: 5px;
             box-sizing: border-box;
+            border: solid black;
+            border-color: black;
+
+            &:nth-child(n) {
+                border-width: 3px 3px 5px 5px;
+                border-radius:4% 95% 6% 95%/95% 4% 92% 5%;
+                transform: rotate(-2deg);
+            }
+
+            &:nth-child(2n) {
+                border-width: 3px 4px 3px 5px;
+                border-radius:95% 4% 92% 5%/4% 95% 6% 95%;
+                transform: rotate(2deg);
+            }
+
+            &:nth-child(3n) {
+                border-width: 5px 3px 3px 5px;
+                border-radius:95% 4% 97% 5%/4% 94% 3% 95%;
+                transform: rotate(2deg);
+            }
+
+            &:hover {
+                transform: scale(1.1);
+                box-shadow: 5px 10px 0 rgba(0,0,0,.7);
+                z-index: 1;
+            }
 
             .event {
                 background: darkblue;
@@ -106,11 +145,5 @@
                 border-radius: 3px;
             }
         }
-    }
-
-    CellDetailPopup {
-        position: absolute;
-        top: 0;
-        left: 0;
     }
 </style>
