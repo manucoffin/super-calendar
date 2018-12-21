@@ -4,7 +4,7 @@
          :style="{left: cssPosition.x, top: cssPosition.y}">
         <div class="header">
             <h3>{{ readableDate }}</h3>
-            <button>X</button>
+            <button @click>X Fermer</button>
         </div>
     </div>
 </template>
