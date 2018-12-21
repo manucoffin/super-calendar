@@ -23,10 +23,6 @@
     font-style: normal;
   }
 
-  @mixin shadow() {
-    box-shadow: 5px 10px 0 rgba(0,0,0,.7);
-  }
-
   * {
     margin: 0;
     padding: 0;

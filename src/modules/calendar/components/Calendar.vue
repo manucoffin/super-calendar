@@ -4,7 +4,7 @@
             <div v-for="cell of cells"
                  :key="cell.id"
                  class="cell"
-                 @click="showDetail">
+                 @click="showDetail($event, cell)">
                 <strong>{{ cell.id }}</strong>
                 <br>
                 <span v-for="event of cell.events"
@@ -16,7 +16,8 @@
         </div>
 
         <CellDetailPopup v-if="showPopup"
-                         :clickedCell="clickedCell">
+                         :clickedCell="clickedCell"
+                         :readableDate="readableDate">
         </CellDetailPopup>
     </div>
 </template>
@@ -44,7 +45,8 @@
     currentMonth!: number;
     currentYear!: number;
     showPopup = false;
-    clickedCell: Cell = {x: 0, y: 0, w: 0, h: 0};
+    clickedCell: Cell = {id: 0, x: 0, y: 0, w: 0, h: 0, events: []};
+    readableDate!: string;
 
     get cells() {
       const daysInMonth = this.daysInMonth(this.currentMonth, this.currentYear);
@@ -58,17 +60,20 @@
       this.currentYear = now.getUTCFullYear();
     }
 
-    private showDetail(e: any) {
+    private showDetail(e: any, cell: any) {
       const el = e.target.getBoundingClientRect();
 
       this.clickedCell = {
+        id: cell.id,
         x: el.left,
         y: el.top,
         w: el.width,
         h: el.height,
+        events: cell.events,
       };
 
       this.showPopup = true;
+      this.readableDate = this.createReadableDate(cell.id);
     }
 
     private buildDaysArray(daysInMonth: number): object[] {
@@ -92,6 +97,16 @@
     private daysInMonth(iMonth: number, iYear: number): number {
       return 32 - new Date(iYear, iMonth, 32).getDate();
     }
+
+    private createReadableDate(dayInMonth: number): string {
+      const date = new Date(this.currentYear, this.currentMonth, dayInMonth);
+      const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+      const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+      const day = days[date.getDay()];
+      const month = months[date.getMonth()];
+
+      return `${day} ${dayInMonth} ${month} ${this.currentYear}`;
+    }
   }
 </script>
 
@@ -112,7 +127,6 @@
             padding: 5px;
             box-sizing: border-box;
             border: solid black;
-            border-color: black;
 
             &:nth-child(n) {
                 border-width: 3px 3px 5px 5px;
@@ -133,8 +147,8 @@
             }
 
             &:hover {
+                @include shadow();
                 transform: scale(1.1);
-                box-shadow: 5px 10px 0 rgba(0,0,0,.7);
                 z-index: 1;
             }
 

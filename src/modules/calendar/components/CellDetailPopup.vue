@@ -1,8 +1,11 @@
 <template>
     <div class="container"
-         :class="popupSide"
+         :class="[popupSide, {'bottom-half': bottomHalf}]"
          :style="{left: cssPosition.x, top: cssPosition.y}">
-        Did someone say <em>chimichangas?</em>
+        <div class="header">
+            <h3>{{ readableDate }}</h3>
+            <button>X</button>
+        </div>
     </div>
 </template>
 
@@ -20,23 +23,34 @@
   })
   export default class CellDetailPopup extends Vue {
     @Prop({ default: {x: 0, y: 0, w: 0, h: 0} }) clickedCell!: Cell;
+    @Prop({ default: ''}) readableDate!: string;
     popupWidth: number = 300;
+    popupHeight: number = 300;
     popupPadding: number = 30;
     popupSide: string = 'left';
+    bottomHalf: boolean = false;
 
     get cssPosition() {
-      let offset = this.clickedCell.w;
+      let offsetX = this.clickedCell.w;
+      let offsetY = 0;
 
       if (this.clickedCell.x > window.innerWidth / 2) {
         this.popupSide = 'left';
-        offset = -(this.popupWidth + this.popupPadding);
+        offsetX = -(this.popupWidth + this.popupPadding);
       } else {
         this.popupSide = 'right';
       }
 
+      if (this.clickedCell.y > window.innerHeight - this.popupHeight) {
+        offsetY = -this.popupHeight + this.clickedCell.h / 2;
+        this.bottomHalf = true;
+      } else {
+        this.bottomHalf = false;
+      }
+
       return {
-        x: `${this.clickedCell.x + offset}px`,
-        y: `${this.clickedCell.y}px`,
+        x: `${this.clickedCell.x + offsetX}px`,
+        y: `${this.clickedCell.y + offsetY}px`,
       }
     }
   }
@@ -82,6 +96,18 @@
                 left: -10px;
                 top: 33px;
             }
+
+            &.bottom-half {
+                &:before {
+                    top: 280px;
+                    left: -15px;
+                }
+
+                &:after {
+                    top: 283px;
+                    left: -7px;
+                }
+            }
         }
 
         &.left {
@@ -109,6 +135,31 @@
                 border-bottom: 7px solid transparent;
                 right: -9px;
                 top: 33px;
+            }
+
+            &.bottom-half {
+                &:before {
+                    top: 280px;
+                    right: -21px;
+                }
+
+                &:after {
+                    top: 283px;
+                    right: -11px;
+                }
+            }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            transform: rotate(-2deg);
+
+            button {
+                background: none;
+                border: none;
+                font-weight: bold;
+                font-size: 2rem;
             }
         }
     }
