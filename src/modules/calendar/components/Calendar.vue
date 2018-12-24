@@ -1,5 +1,6 @@
 <template>
     <div>
+        <CalendarHeader></CalendarHeader>
 
         <div class="calendar">
             <div v-for="cell of cells"
@@ -14,6 +15,16 @@
                       class="event">
                     {{ event.label }}
                 </span>
+            </div>
+
+            <div class="footer">
+                <div class="infos"
+                     v-if="fetchingHeroes">
+                    <Loader></Loader>
+                    <span>Le super signal a été envoyé, les héros arrivent...</span>
+                </div>
+
+                <a href="http://marvel.com">Data provided by Marvel. © {{ new Date().getUTCFullYear() }} MARVEL</a>
             </div>
         </div>
 
@@ -30,6 +41,7 @@
   import { CalendarEvent } from '@/models/CalendarEvent';
   import Loader from '@/components/Loader.vue';
   import CellDetailPopup from '@/modules/calendar/components/CellDetailPopup.vue';
+  import CalendarHeader from '@/modules/calendar/components/CalendarHeader.vue';
   import { State, Action, Getter, namespace } from 'vuex-class';
   import { Cell } from '@/models/Cell';
 
@@ -41,16 +53,18 @@
     components: {
       CellDetailPopup,
       Loader,
+      CalendarHeader,
     }
   })
   export default class ArticlesList extends Vue {
     @storeModule.Getter events!: CalendarEvent[];
     @storeModule.Getter heroes!: any[];
     @storeModule.Getter fetchingHeroes!: boolean;
+    @storeModule.Getter today!: Date;
+    @storeModule.Getter currentDay!: number;
+    @storeModule.Getter currentMonth!: number;
+    @storeModule.Getter currentYear!: number;
 
-    currentDay!: number;
-    currentMonth!: number;
-    currentYear!: number;
     showPopup = false;
     clickedCell: Cell = {id: 0, x: 0, y: 0, w: 0, h: 0, events: []};
     readableDate!: string;
@@ -62,13 +76,6 @@
 
     get thumbnails() {
       return this.heroes.map(hero => `url(${hero.thumbnail.path}.${hero.thumbnail.extension})`);
-    }
-
-    created() {
-      const now = new Date();
-      this.currentDay = now.getDate();
-      this.currentMonth = now.getMonth();
-      this.currentYear = now.getUTCFullYear();
     }
 
     private showDetail(e: any, cell: any) {
@@ -123,7 +130,7 @@
 
 <style scoped lang="scss">
     .calendar {
-        height: 100vh;
+        height: 90vh;
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         grid-template-rows: repeat(5, 1fr);
@@ -169,6 +176,31 @@
                 color: white;
                 padding: 3px;
                 border-radius: 3px;
+            }
+        }
+
+        .footer {
+            grid-column-start: 4;
+            grid-column-end: 8;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+
+            .infos {
+                display: flex;
+                align-self: center;
+                align-items: center;
+
+                span {
+                    font-weight: bold;
+                    font-size: 1.4rem;
+                    margin-left: 1rem;
+                }
+            }
+
+            a {
+                align-self: flex-end;
+                margin-top: 1rem;
             }
         }
     }

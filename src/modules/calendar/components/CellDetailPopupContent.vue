@@ -39,7 +39,7 @@
   const storeModule = namespace(moduleNamespace);
 
   @Component({
-    name: 'CellDetailPopup',
+    name: 'CellDetailPopupContent',
   })
   export default class CellDetailPopupContent extends Vue {
     // @Prop({ default: {x: 0, y: 0, w: 0, h: 0} }) clickedCell!: Cell;

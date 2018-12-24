@@ -19,7 +19,19 @@ const mutations: MutationTree<CalendarEventState> = {
 
   setFetchingHeroes(state, payload: boolean) {
     state.fetchingHeroes = payload;
-  }
+  },
+
+  setCurrentDay(state, payload: number) {
+    state.currentDay = payload;
+  },
+
+  setCurrentMonth(state, payload: number) {
+    state.currentMonth = payload;
+  },
+
+  setCurrentYear(state, payload: number) {
+    state.currentYear = payload;
+  },
 };
 
 export default mutations;

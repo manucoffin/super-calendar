@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import CalendarContainer from '@/modules/calendar/index.vue';
-import ArticleDetail from '@/modules/calendar/components/ArticleDetail.vue';
 
 Vue.use(Router);
 

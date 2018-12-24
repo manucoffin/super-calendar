@@ -15,6 +15,18 @@ const getters: GetterTree<CalendarEventState, RootState> = {
   fetchingHeroes(state): boolean {
     return state.fetchingHeroes;
   },
+
+  currentDay(state): number {
+    return state.currentDay;
+  },
+
+  currentMonth(state): number {
+    return state.currentMonth;
+  },
+
+  currentYear(state): number {
+    return state.currentYear;
+  },
 };
 
 export default getters;

@@ -9,6 +9,9 @@ export const state: CalendarEventState = {
   events: [],
   heroes: [],
   fetchingHeroes: false,
+  currentDay: new Date().getDate(),
+  currentMonth: new Date().getMonth(),
+  currentYear: new Date().getUTCFullYear(),
 };
 
 const namespaced: boolean = true;
