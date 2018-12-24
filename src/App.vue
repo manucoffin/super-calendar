@@ -28,9 +28,4 @@
     padding: 0;
     font-family: 'AmaticSC';
   }
-
-  $yellow: rgb(247,148,31);
-  $yellow-light: rgb(249,175,86);
-  $purple-light: rgb(153,93,181);
-  $purple: rgb(123,74,145);
 </style>

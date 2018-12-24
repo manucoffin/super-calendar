@@ -7,6 +7,8 @@ import { RootState } from '@/store/type';
 
 export const state: CalendarEventState = {
   events: [],
+  heroes: [],
+  fetchingHeroes: false,
 };
 
 const namespaced: boolean = true;

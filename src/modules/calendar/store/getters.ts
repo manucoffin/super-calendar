@@ -7,6 +7,14 @@ const getters: GetterTree<CalendarEventState, RootState> = {
   events(state): CalendarEvent[] {
     return state.events;
   },
+
+  heroes(state): any[] {
+    return state.heroes;
+  },
+
+  fetchingHeroes(state): boolean {
+    return state.fetchingHeroes;
+  },
 };
 
 export default getters;

@@ -4,7 +4,14 @@
          :style="{left: cssPosition.x, top: cssPosition.y}">
         <div class="header">
             <h3>{{ readableDate }}</h3>
-            <button @click>X Fermer</button>
+            <button @click="sendCloseEvent">X Fermer</button>
+        </div>
+
+        <CellDetailPopupContent></CellDetailPopupContent>
+
+        <div class="footer">
+            <button class="cancel-btn">annuler</button>
+            <button class="save-btn">enregistrer</button>
         </div>
     </div>
 </template>
@@ -14,15 +21,19 @@
   import { CalendarEvent } from '@/models/CalendarEvent';
   import { State, Action, Getter, namespace } from 'vuex-class';
   import { Cell } from '@/models/Cell';
+  import CellDetailPopupContent from '@/modules/calendar/components/CellDetailPopupContent.vue';
 
   const moduleNamespace = '$_calendar';
   const storeModule = namespace(moduleNamespace);
 
   @Component({
     name: 'CellDetailPopup',
+    components: {
+      CellDetailPopupContent,
+    }
   })
   export default class CellDetailPopup extends Vue {
-    @Prop({ default: {x: 0, y: 0, w: 0, h: 0} }) clickedCell!: Cell;
+    @Prop({ default: () => { return {x: 0, y: 0, w: 0, h: 0}} }) clickedCell!: Cell;
     @Prop({ default: ''}) readableDate!: string;
     popupWidth: number = 300;
     popupHeight: number = 300;
@@ -53,6 +64,10 @@
         y: `${this.clickedCell.y + offsetY}px`,
       }
     }
+
+    sendCloseEvent() {
+      this.$emit('closePopup');
+    }
   }
 </script>
 
@@ -69,6 +84,9 @@
         height: 300px;
         padding: 15px;
         z-index: 2;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
 
         &.right {
             &:before {
@@ -154,12 +172,94 @@
             display: flex;
             justify-content: space-between;
             transform: rotate(-2deg);
+            padding-bottom: .5rem;
+            border-bottom: 2px dashed rgb(100,100,100);
+
+
+            h3 {
+                font-size: 1.4rem;
+            }
 
             button {
                 background: none;
                 border: none;
                 font-weight: bold;
-                font-size: 2rem;
+                font-size: 1.2rem;
+                color: $red;
+                cursor: pointer;
+                
+                &:hover {
+                    text-decoration: underline;
+                }
+
+                &:focus {
+                    outline: 0;
+                }
+            }
+        }
+
+        .footer {
+            display: flex;
+            justify-content: flex-end;
+            transform: rotate(-2deg);
+
+            button {
+                font-size: 1.2rem;
+                background: none;
+                border: none;
+                cursor: pointer;
+
+                &:focus {
+                    outline: 0;
+                }
+
+                &.cancel-btn {
+                    margin-right: 1rem;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+
+                &.save-btn {
+                    background: $yellow;
+                    border-radius: 3px;
+                    padding: 2px 5px;
+                    border: solid black;
+                    border-width: 2px 3px 2px 4px;
+                    border-radius:95% 4% 92% 5%/4% 95% 6% 95%;
+                    position: relative;
+
+                    &:before {
+                        content: '';
+                        display: block;
+                        background: rgba(255,255,255,.3);
+                        width: 95%;
+                        height: 6px;
+                        border-radius: 5px;
+                        position: absolute;
+                        transform: rotate(-1deg);
+                        left: 0;
+                        top: 0;
+                    }
+
+                    &:after {
+                        content: '';
+                        display: block;
+                        background: rgba(255,255,255,.3);
+                        width: 4px;
+                        height: 75%;
+                        border-radius: 0 0 5px 5px;
+                        position: absolute;
+                        transform: rotate(-3deg);
+                        left: 0;
+                        top: 6px;
+                    }
+
+                    &:hover {
+                        background: $yellow-light;
+                    }
+                }
             }
         }
     }

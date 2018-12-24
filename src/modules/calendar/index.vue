@@ -22,7 +22,9 @@
   })
   export default class CalendarContainer extends mixins(ModuleInit) {
     @storeModule.Getter events!: CalendarEvent[];
+    @storeModule.Getter heroes!: any[];
     @storeModule.Action fetchEvents!: any;
+    @storeModule.Action fetchHeroes!: any;
 
     created() {
       this.moduleNamespace = moduleNamespace;
@@ -32,8 +34,7 @@
       }
 
       this.fetchEvents();
-      if (this.events.length === 0) {
-      }
+      this.fetchHeroes();
     }
   }
 </script>

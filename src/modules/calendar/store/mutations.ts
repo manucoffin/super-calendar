@@ -9,6 +9,17 @@ const mutations: MutationTree<CalendarEventState> = {
   eventsError(state) {
     state.events = [];
   },
+
+  heroesLoaded(state, payload: any[]) {
+    state.heroes = payload;
+  },
+  heroesError(state) {
+    state.heroes = [];
+  },
+
+  setFetchingHeroes(state, payload: boolean) {
+    state.fetchingHeroes = payload;
+  }
 };
 
 export default mutations;

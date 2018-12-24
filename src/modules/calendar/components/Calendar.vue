@@ -1,12 +1,14 @@
 <template>
     <div>
+
         <div class="calendar">
             <div v-for="cell of cells"
                  :key="cell.id"
                  class="cell"
-                 @click="showDetail($event, cell)">
+                 @click="showDetail($event, cell)"
+                 :style="{ backgroundImage: thumbnails[cell.id - 1] }">
                 <strong>{{ cell.id }}</strong>
-                <br>
+
                 <span v-for="event of cell.events"
                       :key="event.id"
                       class="event">
@@ -17,7 +19,8 @@
 
         <CellDetailPopup v-if="showPopup"
                          :clickedCell="clickedCell"
-                         :readableDate="readableDate">
+                         :readableDate="readableDate"
+                         @closePopup="showPopup = false">
         </CellDetailPopup>
     </div>
 </template>
@@ -25,6 +28,7 @@
 <script lang="ts">
   import { Component, Prop, Vue } from 'vue-property-decorator';
   import { CalendarEvent } from '@/models/CalendarEvent';
+  import Loader from '@/components/Loader.vue';
   import CellDetailPopup from '@/modules/calendar/components/CellDetailPopup.vue';
   import { State, Action, Getter, namespace } from 'vuex-class';
   import { Cell } from '@/models/Cell';
@@ -36,10 +40,13 @@
     name: 'Calendar',
     components: {
       CellDetailPopup,
+      Loader,
     }
   })
   export default class ArticlesList extends Vue {
     @storeModule.Getter events!: CalendarEvent[];
+    @storeModule.Getter heroes!: any[];
+    @storeModule.Getter fetchingHeroes!: boolean;
 
     currentDay!: number;
     currentMonth!: number;
@@ -51,6 +58,10 @@
     get cells() {
       const daysInMonth = this.daysInMonth(this.currentMonth, this.currentYear);
       return this.buildDaysArray(daysInMonth);
+    }
+
+    get thumbnails() {
+      return this.heroes.map(hero => `url(${hero.thumbnail.path}.${hero.thumbnail.extension})`);
     }
 
     created() {
@@ -114,16 +125,17 @@
     .calendar {
         height: 100vh;
         display: grid;
-        grid-template-columns: auto auto auto auto auto auto auto;
-        grid-template-rows: auto;
+        grid-template-columns: repeat(7, 1fr);
+        grid-template-rows: repeat(5, 1fr);
         grid-column-gap: 2px;
         grid-row-gap: 2px;
         padding: 3px;
         box-sizing: border-box;
         cursor: pointer;
+        overflow-y: hidden;
 
         .cell {
-            background: rgb(171,213,66);
+            background-size: cover;
             padding: 5px;
             box-sizing: border-box;
             border: solid black;
