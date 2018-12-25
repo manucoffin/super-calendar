@@ -1,9 +1,22 @@
 <template>
     <div class="calendar-header">
         <div class="actions">
-            <button @click="changeCurrentMonth(-1)">BACK</button>
-            <h1>{{ currentDate }}</h1>
-            <button @click="changeCurrentMonth(1)">NEXT</button>
+            <button @click="changeCurrentMonth(-1)"><</button>
+
+            <h1>
+                <select v-model="displayMonth">
+                    <option v-for="(month, index) of months"
+                            :key="index"
+                            :value="index">
+                        {{ month }}
+                    </option>
+                </select>
+
+                <input type="number"
+                       v-model="displayYear">
+            </h1>
+
+            <button @click="changeCurrentMonth(1)">></button>
         </div>
         
         <div class="days">
@@ -34,8 +47,20 @@
     days: string[] = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
     months: string[] = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
-    get currentDate() {
-      return `${this.months[this.currentMonth]} ${this.currentYear}`;
+    get displayYear() {
+      return this.currentYear;
+    }
+
+    set displayYear(newVal: number) {
+      this.setCurrentYear(newVal * 1);
+    }
+
+    get displayMonth() {
+      return this.currentMonth;
+    }
+
+    set displayMonth(newVal) {
+      this.setCurrentMonth(newVal);
     }
 
     get orderedDays() {
@@ -76,6 +101,38 @@
         .actions {
             display: flex;
             justify-content: space-between;
+
+            h1 {
+                input, select {
+                    font-size: 1.9rem;
+                    background: none;
+                    border: none;
+                    font-weight: bold;
+
+                    &:focus {
+                        outline: 0;
+                    }
+                }
+
+                input {
+                    width: 70px;
+                    text-align: right;
+                }
+
+                select {
+                    -webkit-appearance: none;
+                    -moz-appearance: none;
+                    appearance: none;
+                    cursor: pointer;
+                }
+            }
+
+            button {
+                @include button($yellow, $yellow-light);
+                font-size: 1.7rem;
+                width: 3rem;
+
+            }
         }
         
         .days {

@@ -222,43 +222,7 @@
                 }
 
                 &.save-btn {
-                    background: $yellow;
-                    border-radius: 3px;
-                    padding: 2px 5px;
-                    border: solid black;
-                    border-width: 2px 3px 2px 4px;
-                    border-radius:95% 4% 92% 5%/4% 95% 6% 95%;
-                    position: relative;
-
-                    &:before {
-                        content: '';
-                        display: block;
-                        background: rgba(255,255,255,.3);
-                        width: 95%;
-                        height: 6px;
-                        border-radius: 5px;
-                        position: absolute;
-                        transform: rotate(-1deg);
-                        left: 0;
-                        top: 0;
-                    }
-
-                    &:after {
-                        content: '';
-                        display: block;
-                        background: rgba(255,255,255,.3);
-                        width: 4px;
-                        height: 75%;
-                        border-radius: 0 0 5px 5px;
-                        position: absolute;
-                        transform: rotate(-3deg);
-                        left: 0;
-                        top: 6px;
-                    }
-
-                    &:hover {
-                        background: $yellow-light;
-                    }
+                    @include button($yellow, $yellow-light);
                 }
             }
         }
