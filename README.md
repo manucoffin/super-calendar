@@ -1,12 +1,9 @@
-# Vue + TypeScript starter project
+# Super Calendar
 
-This project consist of a basic blog app with some components, routes and a store as examples to get started for larger applications.
-It is created with vue-cli, with a modules oriented folders structure, and it uses:
-- Typsecript
-- Vuex
-- Vue-router
+A super hero themed calendar, made with VueJs.
 
 ## Project setup
+Copy `.env.dist` and rename it `.env`. 
 ```
 npm install
 ```
