@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-  import { Component, Prop, Vue } from 'vue-property-decorator';
+  import { Component, Prop, Emit, Vue } from 'vue-property-decorator';
   import { State, Action, Getter, Mutation, namespace } from 'vuex-class';
 
   const moduleNamespace = '$_calendar';
@@ -47,6 +47,8 @@
     days: string[] = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
     months: string[] = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
+    @Emit('closePopup') emitClosePopup() {}
+
     get displayYear() {
       return this.currentYear;
     }
@@ -61,6 +63,7 @@
 
     set displayMonth(newVal) {
       this.setCurrentMonth(newVal);
+      this.emitClosePopup();
     }
 
     get orderedDays() {
@@ -85,6 +88,8 @@
       } else {
         this.setCurrentMonth(this.currentMonth + offset);
       }
+
+      this.emitClosePopup();
     }
   }
 </script>

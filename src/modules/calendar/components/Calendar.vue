@@ -1,13 +1,13 @@
 <template>
     <div>
-        <CalendarHeader></CalendarHeader>
+        <CalendarHeader @closePopup="showPopup = false"></CalendarHeader>
 
         <div class="calendar">
             <div v-for="cell of cells"
                  :key="cell.id"
                  class="cell"
                  @click="showDetail($event, cell)"
-                 :style="{ backgroundImage: thumbnails[cell.id - 1] }">
+                 :style="{ backgroundImage: thumbnails[currentMonth * 31 + cell.id - 1] }">
                 <strong>{{ cell.id }}</strong>
 
                 <span v-for="event of cell.events"
@@ -60,7 +60,6 @@
     @storeModule.Getter events!: CalendarEvent[];
     @storeModule.Getter heroes!: any[];
     @storeModule.Getter fetchingHeroes!: boolean;
-    @storeModule.Getter today!: Date;
     @storeModule.Getter currentDay!: number;
     @storeModule.Getter currentMonth!: number;
     @storeModule.Getter currentYear!: number;

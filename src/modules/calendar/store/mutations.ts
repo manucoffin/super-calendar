@@ -10,6 +10,14 @@ const mutations: MutationTree<CalendarEventState> = {
     state.events = [];
   },
 
+  addEvent(state, payload: CalendarEvent) {
+    state.events.push(payload);
+  },
+
+  updateEventToCreate(state, payload: CalendarEvent) {
+    state.eventToCreate = payload;
+  },
+
   heroesLoaded(state, payload: any[]) {
     state.heroes = payload;
   },

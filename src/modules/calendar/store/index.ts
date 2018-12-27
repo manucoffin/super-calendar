@@ -4,9 +4,19 @@ import mutations from './mutations';
 import { CalendarEventState } from '@/models/CalendarEventState';
 import { Module } from 'vuex';
 import { RootState } from '@/store/type';
+import { CalendarEventCategory } from '@/models/CalendarEventCategory';
 
 export const state: CalendarEventState = {
   events: [],
+  eventToCreate: {
+    id: 0,
+    date_start: '',
+    date_end: '',
+    label: '',
+    description: '',
+    categories: [],
+    location: '',
+  },
   heroes: [],
   fetchingHeroes: false,
   currentDay: new Date().getDate(),

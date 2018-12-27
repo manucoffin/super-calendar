@@ -5,6 +5,17 @@ import { CalendarEventState } from '@/models/CalendarEventState';
 import { RootState } from '@/store/type';
 
 const actions: ActionTree<CalendarEventState, RootState> = {
+  createEvent({ commit }, payload): void {
+    // TODO: Implémenter la fonction en mode requête HTTP
+    commit('addEvent', payload);
+  },
+
+  // TODO: Remplacer par la fonction en mode requête HTTP
+  // fetchEvents({ commit, getters }): void {
+  //   const payload = getters.events;
+  //   commit('eventsLoaded', payload);
+  // },
+
   async fetchEvents({ commit }): Promise<any> {
     try {
       const response = await axios.get(process.env.VUE_APP_API_URL +  '/events');

@@ -12,6 +12,10 @@ const getters: GetterTree<CalendarEventState, RootState> = {
     return state.heroes;
   },
 
+  eventToCreate(state): CalendarEvent {
+    return state.eventToCreate;
+  },
+
   fetchingHeroes(state): boolean {
     return state.fetchingHeroes;
   },

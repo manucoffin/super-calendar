@@ -3,25 +3,50 @@
          :class="[popupSide, {'bottom-half': bottomHalf}]"
          :style="{left: cssPosition.x, top: cssPosition.y}">
         <div class="header">
-            <h3>{{ readableDate }}</h3>
-            <button @click="sendCloseEvent">X Fermer</button>
+            <div>
+                <p>Je suis <span>{{ hero.name }}</span> !</p>
+                <button @click="emitClosePopup">x fermer</button>
+            </div>
+            <p>Je vais t'aider à ajouter un évènement le {{ readableDate }}.</p>
         </div>
 
-        <CellDetailPopupContent></CellDetailPopupContent>
+        <CellDetailPopupContent :current-input="currentInput"
+                                :clickedCell="clickedCell">
+        </CellDetailPopupContent>
 
         <div class="footer">
-            <button class="cancel-btn">annuler</button>
-            <button class="save-btn">enregistrer</button>
+            <button v-if="currentInput === 0"
+                    class="cancel-btn"
+                    @click="emitClosePopup">
+                annuler
+            </button>
+            <button v-else
+                    class="cancel-btn"
+                    @click="changeCurrentInput(-1)">
+                retour
+            </button>
+
+            <button v-if="currentInput === inputsLength"
+                    class="save-btn"
+                    @click="saveEvent">
+                enregistrer
+            </button>
+            <button v-else
+                    class="save-btn"
+                    @click="changeCurrentInput(+1)">
+                suivant
+            </button>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-  import { Component, Prop, Vue } from 'vue-property-decorator';
+  import { Component, Prop, Emit, Vue } from 'vue-property-decorator';
   import { CalendarEvent } from '@/models/CalendarEvent';
   import { State, Action, Getter, namespace } from 'vuex-class';
   import { Cell } from '@/models/Cell';
   import CellDetailPopupContent from '@/modules/calendar/components/CellDetailPopupContent.vue';
+  import { EventInput } from '@/models/EventInput';
 
   const moduleNamespace = '$_calendar';
   const storeModule = namespace(moduleNamespace);
@@ -35,11 +60,25 @@
   export default class CellDetailPopup extends Vue {
     @Prop({ default: () => { return {x: 0, y: 0, w: 0, h: 0}} }) clickedCell!: Cell;
     @Prop({ default: ''}) readableDate!: string;
+
+    @storeModule.Getter heroes!: any[];
+    @storeModule.Getter currentMonth!: number;
+    @storeModule.Getter eventToCreate!: CalendarEvent;
+    @storeModule.Action createEvent!: Function;
+
     popupWidth: number = 300;
     popupHeight: number = 300;
     popupPadding: number = 30;
     popupSide: string = 'left';
     bottomHalf: boolean = false;
+    currentInput: number = 0;
+    inputsLength: number = 5;
+
+    @Emit('closePopup') emitClosePopup() {}
+
+    get hero() {
+      return this.heroes[this.currentMonth * 31 + this.clickedCell.id - 1]
+    }
 
     get cssPosition() {
       let offsetX = this.clickedCell.w;
@@ -65,8 +104,12 @@
       }
     }
 
-    sendCloseEvent() {
-      this.$emit('closePopup');
+    changeCurrentInput(offset: number) {
+      this.currentInput += offset;
+    }
+
+    saveEvent() {
+      this.createEvent(this.eventToCreate);
     }
   }
 </script>
@@ -169,31 +212,41 @@
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
             transform: rotate(-2deg);
-            padding-bottom: .5rem;
-            border-bottom: 2px dashed rgb(100,100,100);
+            padding-bottom: 1.5rem;
 
-
-            h3 {
-                font-size: 1.4rem;
+            p {
+                text-align: justify;
+                font-size: 1.3rem;
+                font-weight: bold;
+                
+                span {
+                    font-size: 1.5rem;
+                }
             }
 
-            button {
-                background: none;
-                border: none;
-                font-weight: bold;
-                font-size: 1.2rem;
-                color: $red;
-                cursor: pointer;
-                
-                &:hover {
-                    text-decoration: underline;
-                }
+            &>div {
+                display: flex;
+                justify-content: space-between;
 
-                &:focus {
-                    outline: 0;
+                button {
+                    background: none;
+                    border: none;
+                    font-weight: bold;
+                    font-size: 1.2rem;
+                    color: $red;
+                    cursor: pointer;
+                    min-width: 46px;
+                    margin-left: 1rem;
+                    align-self: baseline;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+
+                    &:focus {
+                        outline: 0;
+                    }
                 }
             }
         }
