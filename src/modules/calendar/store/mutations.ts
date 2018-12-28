@@ -15,6 +15,11 @@ const mutations: MutationTree<CalendarEventState> = {
     state.events.push(payload);
   },
 
+  deleteEvent(state, payload: CalendarEvent) {
+    const index = state.events.findIndex((event: CalendarEvent) => event.id === payload.id);
+    Vue.delete(state.events, index)
+  },
+
   updateEvent(state, payload: CalendarEvent) {
     const index = state.events.findIndex((event: CalendarEvent) => event.id === payload.id);
     Vue.set(state.events, index, payload);

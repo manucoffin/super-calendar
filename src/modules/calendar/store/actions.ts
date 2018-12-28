@@ -15,6 +15,11 @@ const actions: ActionTree<CalendarEventState, RootState> = {
     commit('updateEvent', payload);
   },
 
+  deleteEvent({ commit }, payload): void {
+    // TODO: Implémenter la fonction en mode requête HTTP
+    commit('deleteEvent', payload);
+  },
+
   async fetchEvents({ commit }): Promise<any> {
     try {
       const response = await axios.get(process.env.VUE_APP_API_URL +  '/events');

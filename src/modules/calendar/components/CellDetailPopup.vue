@@ -3,11 +3,19 @@
          :class="[popupSide, {'bottom-half': bottomHalf}]"
          :style="{left: cssPosition.x, top: cssPosition.y}">
         <div class="header">
-            <div>
+            <div class="sub-header">
                 <p>Je suis <span>{{ hero.name }}</span> !</p>
                 <button @click="emitClosePopup">x fermer</button>
             </div>
-            <p>Je vais t'aider à {{ selectedEvent ? 'modifier' : 'ajouter' }} un évènement le {{ readableDate }}.</p>
+            <p v-if="!selectedEvent">Je vais t'aider à ajouter un évènement le {{ readableDate }}.</p>
+            <div v-else
+                 class="header-actions">
+                <p>
+                    Veux-tu supprimer {{ selectedEvent.label }} ?
+                    <button @click="removeEvent">Oui, supprimer</button>
+                </p>
+                <p>Sinon, laisse moi t'aider à le modifier.</p>
+            </div>
         </div>
 
         <CellDetailPopupContent :current-input="currentInput"
@@ -68,6 +76,7 @@
     @storeModule.Getter eventToCreate!: CalendarEvent;
     @storeModule.Action updateEvent!: Function;
     @storeModule.Action createEvent!: Function;
+    @storeModule.Action deleteEvent!: Function;
 
     popupWidth: number = 300;
     popupHeight: number = 300;
@@ -107,8 +116,13 @@
       }
     }
 
-    changeCurrentInput(offset: number) {
+    changeCurrentInput(offset: number): void {
       this.currentInput += offset;
+    }
+
+    removeEvent(): void {
+      this.deleteEvent(this.selectedEvent);
+      this.emitClosePopup();
     }
 
     saveEvent() {
@@ -234,7 +248,7 @@
                 }
             }
 
-            &>div {
+            .sub-header {
                 display: flex;
                 justify-content: space-between;
 
@@ -255,6 +269,20 @@
 
                     &:focus {
                         outline: 0;
+                    }
+                }
+            }
+
+            .header-actions {
+                margin-top: 1rem;
+
+                p {
+                    display: flex;
+                    justify-content: space-between;
+
+                    button {
+                        @include button($yellow, $yellow-light);
+                        font-size: 1.2rem;
                     }
                 }
             }
