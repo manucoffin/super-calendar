@@ -1,6 +1,7 @@
 import { MutationTree } from 'vuex';
 import { CalendarEventState } from '@/models/CalendarEventState';
 import { CalendarEvent } from '@/models/CalendarEvent';
+import { Vue } from 'vue-property-decorator';
 
 const mutations: MutationTree<CalendarEventState> = {
   eventsLoaded(state, payload: CalendarEvent[]) {
@@ -12,6 +13,11 @@ const mutations: MutationTree<CalendarEventState> = {
 
   addEvent(state, payload: CalendarEvent) {
     state.events.push(payload);
+  },
+
+  updateEvent(state, payload: CalendarEvent) {
+    const index = state.events.findIndex((event: CalendarEvent) => event.id === payload.id);
+    Vue.set(state.events, index, payload);
   },
 
   updateEventToCreate(state, payload: CalendarEvent) {

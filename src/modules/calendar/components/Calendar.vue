@@ -6,12 +6,13 @@
             <div v-for="cell of cells"
                  :key="cell.id"
                  class="cell"
-                 @click="showDetail($event, cell)"
+                 @click="showCalendarPopup($event, {event: null, cell})"
                  :style="{ backgroundImage: thumbnails[currentMonth * 31 + cell.id - 1] }">
                 <strong>{{ cell.id }}</strong>
 
                 <span v-for="event of cell.events"
                       :key="event.id"
+                      @click.stop="showCalendarPopup($event, {event, cell})"
                       class="event">
                     {{ event.label }}
                 </span>
@@ -31,6 +32,7 @@
         <CellDetailPopup v-if="showPopup"
                          :clickedCell="clickedCell"
                          :readableDate="readableDate"
+                         :selectedEvent="selectedEvent"
                          @closePopup="showPopup = false">
         </CellDetailPopup>
     </div>
@@ -67,6 +69,7 @@
     showPopup = false;
     clickedCell: Cell = {id: 0, x: 0, y: 0, w: 0, h: 0, events: []};
     readableDate!: string;
+    selectedEvent!: CalendarEvent;
 
     get cells() {
       const daysInMonth = this.daysInMonth(this.currentMonth, this.currentYear);
@@ -77,20 +80,21 @@
       return this.heroes.map(hero => `url(${hero.thumbnail.path}.${hero.thumbnail.extension})`);
     }
 
-    private showDetail(e: any, cell: any) {
+    private showCalendarPopup(e: any, payload = { event: new CalendarEvent(), cell: { id: 0, events: [] } }): void {
       const el = e.target.getBoundingClientRect();
 
       this.clickedCell = {
-        id: cell.id,
+        id: payload.cell.id,
         x: el.left,
         y: el.top,
         w: el.width,
         h: el.height,
-        events: cell.events,
+        events: payload.cell.events,
       };
 
+      this.readableDate = this.createReadableDate(payload.cell.id);
+      this.selectedEvent = payload.event;
       this.showPopup = true;
-      this.readableDate = this.createReadableDate(cell.id);
     }
 
     private buildDaysArray(daysInMonth: number): object[] {

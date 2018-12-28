@@ -33,7 +33,8 @@
         this.$store.registerModule('$_calendar', store);
       }
 
-      this.fetchEvents();
+      // TODO: Décommenter quand j'aurai une vraie API
+      // this.fetchEvents();
       this.fetchHeroes();
     }
   }

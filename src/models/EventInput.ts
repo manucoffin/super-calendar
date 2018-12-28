@@ -5,4 +5,5 @@ export interface EventInput {
   type: string;
   value: string;
   name: string;
+  [key: string]: string|number;
 }

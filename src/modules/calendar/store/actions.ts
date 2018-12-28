@@ -10,11 +10,10 @@ const actions: ActionTree<CalendarEventState, RootState> = {
     commit('addEvent', payload);
   },
 
-  // TODO: Remplacer par la fonction en mode requête HTTP
-  // fetchEvents({ commit, getters }): void {
-  //   const payload = getters.events;
-  //   commit('eventsLoaded', payload);
-  // },
+  updateEvent({ commit }, payload): void {
+    // TODO: Implémenter la fonction en mode requête HTTP
+    commit('updateEvent', payload);
+  },
 
   async fetchEvents({ commit }): Promise<any> {
     try {

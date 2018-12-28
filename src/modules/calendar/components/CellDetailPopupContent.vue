@@ -1,6 +1,7 @@
 <template>
     <form class="cell-detail-popup-content">
         <div v-for="input of inputs"
+             :key="input.id"
              class="input-group">
             <template v-if="currentInput === input.id">
                 <label>{{input.label}}</label>
@@ -31,6 +32,7 @@
   export default class CellDetailPopupContent extends Vue {
     @Prop({default: 0}) currentInput!: number;
     @Prop({ default: () => { return {x: 0, y: 0, w: 0, h: 0}} }) clickedCell!: Cell;
+    @Prop({ default: () => { return new CalendarEvent() } }) selectedEvent!: CalendarEvent;
 
     @storeModule.Mutation updateEventToCreate!: Function;
     @storeModule.Getter events!: CalendarEvent[];
@@ -40,7 +42,7 @@
     @Watch('inputs', {deep: true})
     onInputsChanged(newVal: EventInput[], oldVal: EventInput[]) {
       const eventToCreate: CalendarEvent = {
-        id: this.events.length + 1,
+        id: (this.selectedEvent || {}).id || this.events.length + 1,
         date_start: '',
         date_end: '',
         label: '',
@@ -51,7 +53,10 @@
       newVal.map((input: EventInput) => {
         let val = input.value;
         if (input.name.includes('date_')) {
-          val = `${this.currentYear}-${this.currentMonth + 1}-${this.clickedCell.id} ${input.value}`;
+          // Ici on vérifie si la date contient déjà la partie yyyy-mm-dd
+          const isDate = isNaN(new Date(input.value).getUTCFullYear());
+          // Si il manque cette partie (dans le cas de la création d'un event), on l'ajoute manuellement
+          val = isDate ? `${this.currentYear}-${this.currentMonth + 1}-${this.clickedCell.id} ${input.value}` : input.value;
         }
         eventToCreate[input.name] = val;
       });
@@ -59,51 +64,61 @@
       this.updateEventToCreate(eventToCreate);
     }
 
+    @Watch('clickedCell', {deep: true})
+    onClickedCellChanged(newVal: Cell, oldVal: Cell) {
+      this.setInputs();
+    }
+
+    created() {
+      this.setInputs();
+    }
+
     inputColor: any = {
       focus: 'rgb(247,148,31)',
       blur: 'rgb(150,150,150)',
     };
-    focusColor: string = 'rgb(123,74,145)';
-    blurColor: string = 'rgba(0,0,0,.5)';
-    popupMod: string = 'add';
-    inputs: EventInput[] = [
-      {
-        id: 0,
-        label: 'Tout d\'abord, comment va s\'appeler ton évènement ?',
-        placeholder: 'Ex : Aller voir Mary Jane au théatre',
-        type: 'text',
-        value: 'test',
-        name: 'label',
-      },
-      {
-        id: 1,
-        label: 'Super titre ! À quelle heure cela va-t-il commencer ?',
-        placeholder: 'Ex : 20:00',
-        type: 'time',
-        value: '20:00:00',
-        name: 'date_start',
-      },
-      {
-        id: 2,
-        label: 'D\'accord. Toutes les bonnes choses ont une fin, quand se terminera ton évènement ?',
-        placeholder: 'Ex : 22:00',
-        type: 'time',
-        value: '22:00:00',
-        name: 'date_end',
-      },
-      {
-        id: 3,
-        label: 'C\'est noté. Maintenant, peux-tu m\'en dire un peu plus sur cet évènement ?',
-        placeholder: 'Ex : blablablabla',
-        type: 'text',
-        value: 'azeaze',
-        name: 'description',
-      },
-    ];
+    inputs: EventInput[] = [];
 
-    applyStyle(e: any) {
+    applyStyle(e: any): void {
       if (e.target.value.length > 0) return;
       e.target.style.backgroundColor = this.inputColor[e.type];
+    }
+
+    setInputs(): void {
+      this.inputs = [
+        {
+          id: 0,
+          label: 'Tout d\'abord, comment va s\'appeler ton évènement ?',
+          placeholder: 'Ex : Aller voir Mary Jane au théatre',
+          type: 'text',
+          value: (this.selectedEvent || {}).label || 'coucou',
+          name: 'label',
+        },
+        {
+          id: 1,
+          label: 'Super titre ! À quelle heure cela va-t-il commencer ?',
+          placeholder: 'Ex : 20:00',
+          type: 'time',
+          value: (this.selectedEvent || {}).date_start || '20:00:00',
+          name: 'date_start',
+        },
+        {
+          id: 2,
+          label: 'D\'accord. Toutes les bonnes choses ont une fin, quand se terminera ton évènement ?',
+          placeholder: 'Ex : 22:00',
+          type: 'time',
+          value: (this.selectedEvent || {}).date_end || '22:00:00',
+          name: 'date_end',
+        },
+        // {
+        //   id: 3,
+        //   label: 'C\'est noté. Maintenant, peux-tu m\'en dire un peu plus sur cet évènement ?',
+        //   placeholder: 'Ex : blablablabla',
+        //   type: 'text',
+        //   value: (this.selectedEvent || {}).description || 'azeaze',
+        //   name: 'description',
+        // },
+      ];
     }
   }
 </script>

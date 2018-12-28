@@ -7,10 +7,11 @@
                 <p>Je suis <span>{{ hero.name }}</span> !</p>
                 <button @click="emitClosePopup">x fermer</button>
             </div>
-            <p>Je vais t'aider à ajouter un évènement le {{ readableDate }}.</p>
+            <p>Je vais t'aider à {{ selectedEvent ? 'modifier' : 'ajouter' }} un évènement le {{ readableDate }}.</p>
         </div>
 
         <CellDetailPopupContent :current-input="currentInput"
+                                :selectedEvent="selectedEvent"
                                 :clickedCell="clickedCell">
         </CellDetailPopupContent>
 
@@ -59,11 +60,13 @@
   })
   export default class CellDetailPopup extends Vue {
     @Prop({ default: () => { return {x: 0, y: 0, w: 0, h: 0}} }) clickedCell!: Cell;
-    @Prop({ default: ''}) readableDate!: string;
+    @Prop({ default: '' }) readableDate!: string;
+    @Prop({ default: () => { return new CalendarEvent() } }) selectedEvent!: CalendarEvent;
 
     @storeModule.Getter heroes!: any[];
     @storeModule.Getter currentMonth!: number;
     @storeModule.Getter eventToCreate!: CalendarEvent;
+    @storeModule.Action updateEvent!: Function;
     @storeModule.Action createEvent!: Function;
 
     popupWidth: number = 300;
@@ -72,7 +75,7 @@
     popupSide: string = 'left';
     bottomHalf: boolean = false;
     currentInput: number = 0;
-    inputsLength: number = 5;
+    inputsLength: number = 2;
 
     @Emit('closePopup') emitClosePopup() {}
 
@@ -109,7 +112,13 @@
     }
 
     saveEvent() {
-      this.createEvent(this.eventToCreate);
+      if (this.selectedEvent) {
+        this.updateEvent(this.eventToCreate);
+      } else {
+        this.createEvent(this.eventToCreate);
+      }
+      this.currentInput = 0;
+      this.emitClosePopup();
     }
   }
 </script>
