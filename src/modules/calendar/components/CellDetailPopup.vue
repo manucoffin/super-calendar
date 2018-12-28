@@ -2,50 +2,23 @@
     <div class="container"
          :class="[popupSide, {'bottom-half': bottomHalf}]"
          :style="{left: cssPosition.x, top: cssPosition.y}">
-        <div class="header">
-            <div class="sub-header">
-                <p>Je suis <span>{{ hero.name }}</span> !</p>
-                <button @click="emitClosePopup">x fermer</button>
-            </div>
-            <p v-if="!selectedEvent">Je vais t'aider à ajouter un évènement le {{ readableDate }}.</p>
-            <div v-else
-                 class="header-actions">
-                <p>
-                    Veux-tu supprimer {{ selectedEvent.label }} ?
-                    <button @click="removeEvent">Oui, supprimer</button>
-                </p>
-                <p>Sinon, laisse moi t'aider à le modifier.</p>
-            </div>
-        </div>
+
+        <CellDetailPopupHeader :readableDate="readableDate"
+                               :clickedCell="clickedCell"
+                               :selectedEvent="selectedEvent"
+                               @closePopup="emitClosePopup">
+        </CellDetailPopupHeader>
 
         <CellDetailPopupContent :current-input="currentInput"
                                 :selectedEvent="selectedEvent"
                                 :clickedCell="clickedCell">
         </CellDetailPopupContent>
 
-        <div class="footer">
-            <button v-if="currentInput === 0"
-                    class="cancel-btn"
-                    @click="emitClosePopup">
-                annuler
-            </button>
-            <button v-else
-                    class="cancel-btn"
-                    @click="changeCurrentInput(-1)">
-                retour
-            </button>
-
-            <button v-if="currentInput === inputsLength"
-                    class="save-btn"
-                    @click="saveEvent">
-                enregistrer
-            </button>
-            <button v-else
-                    class="save-btn"
-                    @click="changeCurrentInput(+1)">
-                suivant
-            </button>
-        </div>
+        <CellDetailPopupFooter @closePopup="emitClosePopup"
+                               @changeInput="changeCurrentInput"
+                               :currentInput="currentInput"
+                               :selectedEvent="selectedEvent">
+        </CellDetailPopupFooter>
     </div>
 </template>
 
@@ -55,6 +28,8 @@
   import { State, Action, Getter, namespace } from 'vuex-class';
   import { Cell } from '@/models/Cell';
   import CellDetailPopupContent from '@/modules/calendar/components/CellDetailPopupContent.vue';
+  import CellDetailPopupHeader from '@/modules/calendar/components/CellDetailPopupHeader.vue';
+  import CellDetailPopupFooter from '@/modules/calendar/components/CellDetailPopupFooter.vue';
   import { EventInput } from '@/models/EventInput';
 
   const moduleNamespace = '$_calendar';
@@ -64,6 +39,8 @@
     name: 'CellDetailPopup',
     components: {
       CellDetailPopupContent,
+      CellDetailPopupHeader,
+      CellDetailPopupFooter,
     }
   })
   export default class CellDetailPopup extends Vue {
@@ -71,26 +48,14 @@
     @Prop({ default: '' }) readableDate!: string;
     @Prop({ default: () => { return new CalendarEvent() } }) selectedEvent!: CalendarEvent;
 
-    @storeModule.Getter heroes!: any[];
-    @storeModule.Getter currentMonth!: number;
-    @storeModule.Getter eventToCreate!: CalendarEvent;
-    @storeModule.Action updateEvent!: Function;
-    @storeModule.Action createEvent!: Function;
-    @storeModule.Action deleteEvent!: Function;
-
     popupWidth: number = 300;
     popupHeight: number = 300;
     popupPadding: number = 30;
     popupSide: string = 'left';
     bottomHalf: boolean = false;
     currentInput: number = 0;
-    inputsLength: number = 2;
 
     @Emit('closePopup') emitClosePopup() {}
-
-    get hero() {
-      return this.heroes[this.currentMonth * 31 + this.clickedCell.id - 1]
-    }
 
     get cssPosition() {
       let offsetX = this.clickedCell.w;
@@ -116,24 +81,11 @@
       }
     }
 
-    changeCurrentInput(offset: number): void {
-      this.currentInput += offset;
+    changeCurrentInput(val: number): void {
+      this.currentInput = val;
     }
 
-    removeEvent(): void {
-      this.deleteEvent(this.selectedEvent);
-      this.emitClosePopup();
-    }
 
-    saveEvent() {
-      if (this.selectedEvent) {
-        this.updateEvent(this.eventToCreate);
-      } else {
-        this.createEvent(this.eventToCreate);
-      }
-      this.currentInput = 0;
-      this.emitClosePopup();
-    }
   }
 </script>
 
@@ -230,89 +182,6 @@
                 &:after {
                     top: 283px;
                     right: -11px;
-                }
-            }
-        }
-
-        .header {
-            transform: rotate(-2deg);
-            padding-bottom: 1.5rem;
-
-            p {
-                text-align: justify;
-                font-size: 1.3rem;
-                font-weight: bold;
-                
-                span {
-                    font-size: 1.5rem;
-                }
-            }
-
-            .sub-header {
-                display: flex;
-                justify-content: space-between;
-
-                button {
-                    background: none;
-                    border: none;
-                    font-weight: bold;
-                    font-size: 1.2rem;
-                    color: $red;
-                    cursor: pointer;
-                    min-width: 46px;
-                    margin-left: 1rem;
-                    align-self: baseline;
-
-                    &:hover {
-                        text-decoration: underline;
-                    }
-
-                    &:focus {
-                        outline: 0;
-                    }
-                }
-            }
-
-            .header-actions {
-                margin-top: 1rem;
-
-                p {
-                    display: flex;
-                    justify-content: space-between;
-
-                    button {
-                        @include button($yellow, $yellow-light);
-                        font-size: 1.2rem;
-                    }
-                }
-            }
-        }
-
-        .footer {
-            display: flex;
-            justify-content: flex-end;
-            transform: rotate(-2deg);
-
-            button {
-                font-size: 1.2rem;
-                background: none;
-                border: none;
-                cursor: pointer;
-
-                &:focus {
-                    outline: 0;
-                }
-
-                &.cancel-btn {
-                    margin-right: 1rem;
-
-                    &:hover {
-                        text-decoration: underline;
-                    }
-                }
-
-                &.save-btn {
-                    @include button($yellow, $yellow-light);
                 }
             }
         }

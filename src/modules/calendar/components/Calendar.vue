@@ -29,12 +29,14 @@
             </div>
         </div>
 
-        <CellDetailPopup v-if="showPopup"
-                         :clickedCell="clickedCell"
-                         :readableDate="readableDate"
-                         :selectedEvent="selectedEvent"
-                         @closePopup="showPopup = false">
-        </CellDetailPopup>
+        <transition name="bounce">
+            <CellDetailPopup v-if="showPopup"
+                             :clickedCell="clickedCell"
+                             :readableDate="readableDate"
+                             :selectedEvent="selectedEvent"
+                             @closePopup="showPopup = false">
+            </CellDetailPopup>
+        </transition>
     </div>
 </template>
 
@@ -205,6 +207,24 @@
                 align-self: flex-end;
                 margin-top: 1rem;
             }
+        }
+    }
+
+    .bounce-enter-active {
+        animation: bounce-in .3s;
+    }
+    .bounce-leave-active {
+        animation: bounce-in .3s reverse;
+    }
+    @keyframes bounce-in {
+        0% {
+            transform: rotate(2deg) scale(0);
+        }
+        50% {
+            transform: rotate(2deg) scale(1.2);
+        }
+        100% {
+            transform: rotate(2deg) scale(1);
         }
     }
 </style>
