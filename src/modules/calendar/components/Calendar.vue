@@ -83,6 +83,8 @@
     }
 
     private showCalendarPopup(e: any, payload = { event: new CalendarEvent(), cell: { id: 0, events: [] } }): void {
+      const popupAlreadyInitialized = this.showPopup;
+      this.showPopup = false;
       const el = e.target.getBoundingClientRect();
 
       this.clickedCell = {
@@ -96,7 +98,12 @@
 
       this.readableDate = this.createReadableDate(payload.cell.id);
       this.selectedEvent = payload.event;
-      this.showPopup = true;
+
+      if (popupAlreadyInitialized) {
+        setTimeout(() => this.showPopup = true, 300);
+      } else {
+        this.showPopup = true
+      }
     }
 
     private buildDaysArray(daysInMonth: number): object[] {
@@ -151,6 +158,7 @@
             padding: 5px;
             box-sizing: border-box;
             border: solid black;
+            transition: all .2s ease-in;
 
             &:nth-child(n) {
                 border-width: 3px 3px 5px 5px;
