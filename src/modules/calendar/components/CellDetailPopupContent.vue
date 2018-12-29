@@ -3,7 +3,7 @@
         <div v-for="input of inputs"
              :key="input.id"
              class="input-group">
-            <template v-if="currentInput === input.id">
+            <template v-if="currentInput.id === input.id">
                 <label>{{input.label}}</label>
                 <input :placeholder="input.placeholder"
                        :type="input.type"
@@ -20,8 +20,9 @@
   import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
   import { CalendarEvent } from '@/models/CalendarEvent';
   import { State, Action, Getter, Mutation, namespace } from 'vuex-class';
-  import { Cell } from '@/models/Cell';
+  import { Cell, ICell } from '@/models/Cell';
   import { EventInput } from '@/models/EventInput';
+  import { ICurrentInput } from '@/models/CurrentInput';
 
   const moduleNamespace = '$_calendar';
   const storeModule = namespace(moduleNamespace);
@@ -30,14 +31,14 @@
     name: 'CellDetailPopupContent',
   })
   export default class CellDetailPopupContent extends Vue {
-    @Prop({default: 0}) currentInput!: number;
-    @Prop({ default: () => { return {x: 0, y: 0, w: 0, h: 0}} }) clickedCell!: Cell;
+    @Prop({ default: () => { return new Cell() } }) clickedCell!: ICell;
     @Prop({ default: () => { return new CalendarEvent() } }) selectedEvent!: CalendarEvent;
 
     @storeModule.Mutation updateEventToCreate!: Function;
     @storeModule.Getter events!: CalendarEvent[];
     @storeModule.Getter currentYear!: number;
     @storeModule.Getter currentMonth!: number;
+    @storeModule.Getter currentInput!: ICurrentInput;
 
     @Watch('inputs', {deep: true})
     onInputsChanged(newVal: EventInput[], oldVal: EventInput[]) {
@@ -65,7 +66,7 @@
     }
 
     @Watch('clickedCell', {deep: true})
-    onClickedCellChanged(newVal: Cell, oldVal: Cell) {
+    onClickedCellChanged(newVal: ICell, oldVal: ICell) {
       this.setInputs();
     }
 

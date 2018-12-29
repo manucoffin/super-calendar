@@ -9,14 +9,11 @@
                                @closePopup="emitClosePopup">
         </CellDetailPopupHeader>
 
-        <CellDetailPopupContent :current-input="currentInput"
-                                :selectedEvent="selectedEvent"
+        <CellDetailPopupContent :selectedEvent="selectedEvent"
                                 :clickedCell="clickedCell">
         </CellDetailPopupContent>
 
         <CellDetailPopupFooter @closePopup="emitClosePopup"
-                               @changeInput="changeCurrentInput"
-                               :currentInput="currentInput"
                                :selectedEvent="selectedEvent">
         </CellDetailPopupFooter>
     </div>
@@ -25,12 +22,13 @@
 <script lang="ts">
   import { Component, Prop, Emit, Vue } from 'vue-property-decorator';
   import { CalendarEvent } from '@/models/CalendarEvent';
-  import { State, Action, Getter, namespace } from 'vuex-class';
-  import { Cell } from '@/models/Cell';
+  import { State, Action, Getter, Mutation, namespace } from 'vuex-class';
+  import { Cell, ICell } from '@/models/Cell';
   import CellDetailPopupContent from '@/modules/calendar/components/CellDetailPopupContent.vue';
   import CellDetailPopupHeader from '@/modules/calendar/components/CellDetailPopupHeader.vue';
   import CellDetailPopupFooter from '@/modules/calendar/components/CellDetailPopupFooter.vue';
   import { EventInput } from '@/models/EventInput';
+  import { ICurrentInput } from '@/models/CurrentInput';
 
   const moduleNamespace = '$_calendar';
   const storeModule = namespace(moduleNamespace);
@@ -44,16 +42,17 @@
     }
   })
   export default class CellDetailPopup extends Vue {
-    @Prop({ default: () => { return {x: 0, y: 0, w: 0, h: 0}} }) clickedCell!: Cell;
+    @Prop({ default: () => { return new Cell() } }) clickedCell!: ICell;
     @Prop({ default: '' }) readableDate!: string;
     @Prop({ default: () => { return new CalendarEvent() } }) selectedEvent!: CalendarEvent;
+
+    @storeModule.Getter currentInput!: ICurrentInput;
 
     popupWidth: number = 300;
     popupHeight: number = 300;
     popupPadding: number = 30;
     popupSide: string = 'left';
     bottomHalf: boolean = false;
-    currentInput: number = 0;
 
     @Emit('closePopup') emitClosePopup() {}
 
@@ -80,12 +79,6 @@
         y: `${this.clickedCell.y + offsetY}px`,
       }
     }
-
-    changeCurrentInput(val: number): void {
-      this.currentInput = val;
-    }
-
-
   }
 </script>
 

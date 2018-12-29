@@ -2,6 +2,7 @@ import { MutationTree } from 'vuex';
 import { CalendarEventState } from '@/models/CalendarEventState';
 import { CalendarEvent } from '@/models/CalendarEvent';
 import { Vue } from 'vue-property-decorator';
+import { ICurrentInput } from '@/models/CurrentInput';
 
 const mutations: MutationTree<CalendarEventState> = {
   eventsLoaded(state, payload: CalendarEvent[]) {
@@ -50,6 +51,10 @@ const mutations: MutationTree<CalendarEventState> = {
 
   setCurrentYear(state, payload: number) {
     state.currentYear = payload;
+  },
+
+  setCurrentInput(state, payload: ICurrentInput) {
+    state.currentInput = payload;
   },
 };
 

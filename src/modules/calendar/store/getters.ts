@@ -2,6 +2,7 @@ import { GetterTree } from 'vuex';
 import { CalendarEventState } from '@/models/CalendarEventState';
 import { RootState } from '@/store/type';
 import { CalendarEvent } from '@/models/CalendarEvent';
+import { ICurrentInput } from '@/models/CurrentInput';
 
 const getters: GetterTree<CalendarEventState, RootState> = {
   events(state): CalendarEvent[] {
@@ -30,6 +31,10 @@ const getters: GetterTree<CalendarEventState, RootState> = {
 
   currentYear(state): number {
     return state.currentYear;
+  },
+
+  currentInput(state): ICurrentInput {
+    return state.currentInput;
   },
 };
 

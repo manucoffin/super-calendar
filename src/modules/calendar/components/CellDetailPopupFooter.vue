@@ -1,24 +1,24 @@
 <template>
     <div class="footer">
-        <button v-if="currentInput === 0"
+        <button v-if="currentInput.id === 0"
                 class="cancel-btn"
                 @click="emitClosePopup">
             annuler
         </button>
         <button v-else
                 class="cancel-btn"
-                @click="emitChangeInput(currentInput - 1)">
+                @click="changeCurrentInput(currentInput.id - 1)">
             retour
         </button>
 
-        <button v-if="currentInput === inputsLength"
+        <button v-if="currentInput.id === inputsLength"
                 class="save-btn"
                 @click="saveEvent">
             enregistrer
         </button>
         <button v-else
                 class="save-btn"
-                @click="emitChangeInput(currentInput + 1)">
+                @click="changeCurrentInput(currentInput.id + 1)">
             suivant
         </button>
     </div>
@@ -31,6 +31,7 @@
   import { Cell } from '@/models/Cell';
   import CellDetailPopupContent from '@/modules/calendar/components/CellDetailPopupContent.vue';
   import { EventInput } from '@/models/EventInput';
+  import { ICurrentInput } from '@/models/CurrentInput';
 
   const moduleNamespace = '$_calendar';
   const storeModule = namespace(moduleNamespace);
@@ -43,16 +44,16 @@
   })
   export default class CellDetailPopup extends Vue {
     @Prop({ default: () => { return new CalendarEvent() } }) selectedEvent!: CalendarEvent;
-    @Prop({ default: 0 }) currentInput!: number;
 
     @storeModule.Getter eventToCreate!: CalendarEvent;
+    @storeModule.Getter currentInput!: ICurrentInput;
     @storeModule.Action updateEvent!: Function;
     @storeModule.Action createEvent!: Function;
+    @storeModule.Mutation setCurrentInput!: Function;
 
     inputsLength: number = 2;
 
     @Emit('closePopup') emitClosePopup() {}
-    @Emit('changeInput') emitChangeInput(val: number) {}
 
     saveEvent() {
       if (this.selectedEvent) {
@@ -60,8 +61,17 @@
       } else {
         this.createEvent(this.eventToCreate);
       }
-      this.emitChangeInput(0);
+      this.changeCurrentInput(0);
       this.emitClosePopup();
+    }
+
+    changeCurrentInput(newId: number): void {
+      const newCurrentInput = {
+        id: newId,
+        isValid: false,
+      };
+
+      this.setCurrentInput(newCurrentInput);
     }
   }
 </script>

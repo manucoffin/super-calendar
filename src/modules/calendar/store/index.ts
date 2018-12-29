@@ -4,7 +4,7 @@ import mutations from './mutations';
 import { CalendarEventState } from '@/models/CalendarEventState';
 import { Module } from 'vuex';
 import { RootState } from '@/store/type';
-import { CalendarEventCategory } from '@/models/CalendarEventCategory';
+import { CurrentInput } from '@/models/CurrentInput';
 
 export const state: CalendarEventState = {
   events: [],
@@ -22,6 +22,7 @@ export const state: CalendarEventState = {
   currentDay: new Date().getDate(),
   currentMonth: new Date().getMonth(),
   currentYear: new Date().getUTCFullYear(),
+  currentInput: new CurrentInput(),
 };
 
 const namespaced: boolean = true;

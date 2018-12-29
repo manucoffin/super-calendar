@@ -20,7 +20,7 @@
   import { Component, Prop, Emit, Vue } from 'vue-property-decorator';
   import { CalendarEvent } from '@/models/CalendarEvent';
   import { State, Action, Getter, namespace } from 'vuex-class';
-  import { Cell } from '@/models/Cell';
+  import { Cell, ICell } from '@/models/Cell';
   import CellDetailPopupContent from '@/modules/calendar/components/CellDetailPopupContent.vue';
   import { EventInput } from '@/models/EventInput';
 
@@ -34,7 +34,7 @@
     }
   })
   export default class CellDetailPopup extends Vue {
-    @Prop({ default: () => { return {x: 0, y: 0, w: 0, h: 0}} }) clickedCell!: Cell;
+    @Prop({ default: () => { return new Cell() } }) clickedCell!: ICell;
     @Prop({ default: '' }) readableDate!: string;
     @Prop({ default: () => { return new CalendarEvent() } }) selectedEvent!: CalendarEvent;
 

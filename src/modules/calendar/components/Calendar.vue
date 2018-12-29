@@ -47,7 +47,7 @@
   import CellDetailPopup from '@/modules/calendar/components/CellDetailPopup.vue';
   import CalendarHeader from '@/modules/calendar/components/CalendarHeader.vue';
   import { State, Action, Getter, namespace } from 'vuex-class';
-  import { Cell } from '@/models/Cell';
+  import { Cell, ICell } from '@/models/Cell';
 
   const moduleNamespace = '$_calendar';
   const storeModule = namespace(moduleNamespace);
@@ -69,7 +69,7 @@
     @storeModule.Getter currentYear!: number;
 
     showPopup = false;
-    clickedCell: Cell = {id: 0, x: 0, y: 0, w: 0, h: 0, events: []};
+    clickedCell: ICell = new Cell();
     readableDate!: string;
     selectedEvent!: CalendarEvent;
 
@@ -82,7 +82,7 @@
       return this.heroes.map(hero => `url(${hero.thumbnail.path}.${hero.thumbnail.extension})`);
     }
 
-    private showCalendarPopup(e: any, payload = { event: new CalendarEvent(), cell: { id: 0, events: [] } }): void {
+    private showCalendarPopup(e: any, payload = { event: new CalendarEvent(), cell: new Cell() }): void {
       const popupAlreadyInitialized = this.showPopup;
       this.showPopup = false;
       const el = e.target.getBoundingClientRect();

@@ -1,4 +1,5 @@
 import { CalendarEvent } from '@/models/CalendarEvent';
+import { ICurrentInput } from '@/models/CurrentInput';
 
 export interface CalendarEventState {
   events: CalendarEvent[];
@@ -8,4 +9,5 @@ export interface CalendarEventState {
   currentDay: number;
   currentMonth: number;
   currentYear: number;
+  currentInput: ICurrentInput;
 }
