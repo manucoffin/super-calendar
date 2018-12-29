@@ -1,4 +1,7 @@
 module.exports = {
+  baseUrl: process.env.NODE_ENV === 'production'
+      ? '/dist/'
+      : '/',
   lintOnSave: false,
   chainWebpack: config => {
     const oneOfsMap = config.module.rule('scss').oneOfs.store;
