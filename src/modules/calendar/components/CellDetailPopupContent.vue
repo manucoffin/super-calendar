@@ -10,6 +10,7 @@
                        v-model="input.value"
                        @focus="applyStyle($event)"
                        @blur="applyStyle($event)"
+                       @keypress.enter.prevent="callFormNextState"
                        :style="{background: input.value.length > 0 ? inputColor.focus : inputColor.blur}">
             </template>
         </div>
@@ -17,7 +18,7 @@
 </template>
 
 <script lang="ts">
-  import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
+  import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
   import { CalendarEvent } from '@/models/CalendarEvent';
   import { State, Action, Getter, Mutation, namespace } from 'vuex-class';
   import { Cell, ICell } from '@/models/Cell';
@@ -35,10 +36,16 @@
     @Prop({ default: () => { return new CalendarEvent() } }) selectedEvent!: CalendarEvent;
 
     @storeModule.Mutation updateEventToCreate!: Function;
+    @storeModule.Mutation setCurrentInput!: Function;
+    @storeModule.Action updateEvent!: Function;
+    @storeModule.Action createEvent!: Function;
     @storeModule.Getter events!: CalendarEvent[];
     @storeModule.Getter currentYear!: number;
     @storeModule.Getter currentMonth!: number;
     @storeModule.Getter currentInput!: ICurrentInput;
+    @storeModule.Getter eventToCreate!: CalendarEvent;
+
+    @Emit('closePopup') emitClosePopup() {}
 
     @Watch('inputs', {deep: true})
     onInputsChanged(newVal: EventInput[], oldVal: EventInput[]) {
@@ -60,6 +67,10 @@
           val = isDate ? `${this.currentYear}-${this.currentMonth + 1}-${this.clickedCell.id} ${input.value}` : input.value;
         }
         eventToCreate[input.name] = val;
+
+        if (input.id === this.currentInput.id) {
+          this.validInput(input);
+        }
       });
 
       this.updateEventToCreate(eventToCreate);
@@ -92,7 +103,7 @@
           label: 'Tout d\'abord, comment va s\'appeler ton évènement ?',
           placeholder: 'Ex : Aller voir Mary Jane au théatre',
           type: 'text',
-          value: (this.selectedEvent || {}).label || 'coucou',
+          value: (this.selectedEvent || {}).label || '',
           name: 'label',
         },
         {
@@ -100,7 +111,7 @@
           label: 'Super titre ! À quelle heure cela va-t-il commencer ?',
           placeholder: 'Ex : 20:00',
           type: 'time',
-          value: (this.selectedEvent || {}).date_start || '20:00:00',
+          value: this.getTimeString((this.selectedEvent || {}).date_start),
           name: 'date_start',
         },
         {
@@ -108,7 +119,7 @@
           label: 'D\'accord. Toutes les bonnes choses ont une fin, quand se terminera ton évènement ?',
           placeholder: 'Ex : 22:00',
           type: 'time',
-          value: (this.selectedEvent || {}).date_end || '22:00:00',
+          value: this.getTimeString((this.selectedEvent || {}).date_end),
           name: 'date_end',
         },
         // {
@@ -120,6 +131,47 @@
         //   name: 'description',
         // },
       ];
+    }
+
+    getTimeString(dateString: string): string {
+      return (dateString) ? dateString.split(' ')[1] : '';
+    }
+
+    validInput(input: EventInput): void {
+      // Todo: On valide uniquement si le champs est rempli, il faudra pouvoir ajouter d'autres validations
+      const newCurrentInput = {
+        id: input.id,
+        isValid: input.value.length > 0,
+      };
+
+      this.setCurrentInput(newCurrentInput);
+    }
+
+    callFormNextState() {
+      if (this.currentInput.id === this.inputs.length - 1) {
+        this.saveEvent();
+      } else {
+        this.changeCurrentInput(this.currentInput.id + 1);
+      }
+    }
+
+    saveEvent() {
+      if (this.selectedEvent) {
+        this.updateEvent(this.eventToCreate);
+      } else {
+        this.createEvent(this.eventToCreate);
+      }
+      this.changeCurrentInput(0);
+      this.emitClosePopup();
+    }
+
+    changeCurrentInput(newId: number): void {
+      const newCurrentInput = {
+        id: newId,
+        isValid: false,
+      };
+
+      this.setCurrentInput(newCurrentInput);
     }
   }
 </script>

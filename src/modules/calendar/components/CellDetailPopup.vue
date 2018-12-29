@@ -10,7 +10,8 @@
         </CellDetailPopupHeader>
 
         <CellDetailPopupContent :selectedEvent="selectedEvent"
-                                :clickedCell="clickedCell">
+                                :clickedCell="clickedCell"
+                                @closePopup="emitClosePopup">
         </CellDetailPopupContent>
 
         <CellDetailPopupFooter @closePopup="emitClosePopup"

@@ -46,4 +46,9 @@
   &:focus {
     outline: 0;
   }
+
+  &:disabled {
+    background: rgb(150, 150, 150);
+    color: white;
+  }
 }

@@ -12,12 +12,14 @@
         </button>
 
         <button v-if="currentInput.id === inputsLength"
+                :disabled="!currentInput.isValid"
                 class="save-btn"
                 @click="saveEvent">
             enregistrer
         </button>
         <button v-else
                 class="save-btn"
+                :disabled="!currentInput.isValid"
                 @click="changeCurrentInput(currentInput.id + 1)">
             suivant
         </button>

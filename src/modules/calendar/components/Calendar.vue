@@ -10,12 +10,14 @@
                  :style="{ backgroundImage: thumbnails[currentMonth * 31 + cell.id - 1] }">
                 <strong>{{ cell.id }}</strong>
 
-                <span v-for="event of cell.events"
-                      :key="event.id"
-                      @click.stop="showCalendarPopup($event, {event, cell})"
-                      class="event">
-                    {{ event.label }}
-                </span>
+                <div class="events">
+                    <span v-for="event of cell.events"
+                          :key="event.id"
+                          @click.stop="showCalendarPopup($event, {event, cell})"
+                          class="event">
+                        {{ event.label }}
+                    </span>
+                </div>
             </div>
 
             <div class="footer">
@@ -159,6 +161,10 @@
             box-sizing: border-box;
             border: solid black;
             transition: all .2s ease-in;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            align-items: flex-end;
 
             &:nth-child(n) {
                 border-width: 3px 3px 5px 5px;
@@ -184,11 +190,26 @@
                 z-index: 1;
             }
 
-            .event {
-                background: darkblue;
+            strong {
                 color: white;
-                padding: 3px;
-                border-radius: 3px;
+                text-shadow: -1px 1px 0 black;
+                font-size: 1.3rem;
+                font-weight: bold;
+                align-self: flex-start;
+            }
+
+            .events {
+                .event {
+                    background: white;
+                    border: 3px solid;
+                    font-weight: bold;
+                    padding: 3px;
+                    border-radius: 3px;
+
+                    &:hover {
+                        background: $yellow;
+                    }
+                }
             }
         }
 
